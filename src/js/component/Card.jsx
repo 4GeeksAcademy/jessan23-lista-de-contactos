@@ -1,17 +1,22 @@
-import React, { useEffect, useContext } from 'react';
-import { Context } from '../store/appContext';
+import React, { useState, useEffect } from "react";
 
 export const Card = () => {
-  const { store, actions } = useContext(Context);
+  const [contacts, setContacts] = useState([]);
 
   useEffect(() => {
-    actions.getContacts();
-  }, [actions]); // Aquí no cambia nada, es correcto usar "actions" como dependencia
+    fetch("https://playground.4geeks.com/contact/agendas/jessica")
+      .then((result) => result.json())
+      .then((data) => {
+        console.log("Contacts data: ", data);
+        setContacts(data.contacts);
+      })
+      .catch((error) => console.log("Error fetching contacts:", error));
+  }, []);
 
   return (
     <div>
-      {store.contacts.map((item, index) => {
-        return (
+      {contacts && contacts.length > 0 ? (
+        contacts.map((item, index) => (
           <div className="card mb-3" style={{ maxWidth: "540px" }} key={index}>
             <div className="row g-0">
               <div className="col-md-4">
@@ -30,13 +35,11 @@ export const Card = () => {
                 </div>
               </div>
             </div>
-            <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-              <button className="btn btn-primary me-md-2" type="button">Button</button>
-              <button className="btn btn-primary" type="button">Button</button>
-            </div>
           </div>
-        );
-      })}
+        ))
+      ) : (
+        <p>No contacts available</p> // Mensaje en caso de que no haya contactos
+      )}
     </div>
   );
 };
