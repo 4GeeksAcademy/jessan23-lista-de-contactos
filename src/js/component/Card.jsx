@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useContext} from "react";
+import { Link } from "react-router-dom";
 import {Context} from "../store/appContext"
 export const Card = () => {
   
   const {store,actions}=useContext(Context)
 
-  useEffect(() => {
-actions.getContacts()
-  }, []);
+  
 console.log(store.contacts);
 
   return (
@@ -29,14 +28,25 @@ console.log(store.contacts);
                   <p className="card-text">Phone: {item.phone}</p>
                   <p className="card-text">Email: {item.email}</p>
                   <p className="card-text">Address: {item.address}</p>
+                  <div className="d-grid gap-2 col-6 mx-auto">
+
+
+  <button className="btn btn-primary" onClick={()=> actions.deleteContact(item.id)} type= "button">< i className= "fa-solid fa-trash"></i></button>
+  <Link to={`/edit/${item.id}`} className="btn btn-primary"><i className="fa-solid fa-pencil"></i></Link>
+</div>
                 </div>
               </div>
             </div>
           </div>
+
         ))
+        
       ) : (
-        <p>No contacts available</p> // Mensaje en caso de que no haya contactos
+        <p>No contacts available</p>
+        
       )} 
+      
     </div>
-  );
-};
+    )} 
+  
+
