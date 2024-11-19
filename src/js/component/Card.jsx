@@ -1,22 +1,19 @@
-import React, { useState, useEffect } from "react";
-
+import React, { useState, useEffect, useContext} from "react";
+import {Context} from "../store/appContext"
 export const Card = () => {
-  const [contacts, setContacts] = useState([]);
+  
+  const {store,actions}=useContext(Context)
 
   useEffect(() => {
-    fetch("https://playground.4geeks.com/contact/agendas/jessica")
-      .then((result) => result.json())
-      .then((data) => {
-        console.log("Contacts data: ", data);
-        setContacts(data.contacts);
-      })
-      .catch((error) => console.log("Error fetching contacts:", error));
+actions.getContacts()
   }, []);
+console.log(store.contacts);
 
   return (
     <div>
-      {contacts && contacts.length > 0 ? (
-        contacts.map((item, index) => (
+      <h1>hola</h1>
+   {store.contacts && store.contacts.length > 0 ? (
+        store.contacts.map((item, index) => (
           <div className="card mb-3" style={{ maxWidth: "540px" }} key={index}>
             <div className="row g-0">
               <div className="col-md-4">
@@ -39,7 +36,7 @@ export const Card = () => {
         ))
       ) : (
         <p>No contacts available</p> // Mensaje en caso de que no haya contactos
-      )}
+      )} 
     </div>
   );
 };
