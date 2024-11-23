@@ -5,7 +5,14 @@ const getState = ({ getStore, getActions, setStore }) => {
             demo: []
         },
         actions: {
-            // Obtener contactos de la API
+            
+
+
+
+
+
+
+
             getContacts: () => {
                 fetch("https://playground.4geeks.com/contact/agendas/jessica/contacts")
                     .then((result) => result.json())
