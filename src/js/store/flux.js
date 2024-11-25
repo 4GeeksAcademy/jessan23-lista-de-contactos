@@ -2,33 +2,69 @@ const getState = ({ getStore, getActions, setStore }) => {
     return {
         store: {
             contacts: [],
-            demo: []
+            demo: [],
+            rateLimitError: false,  
         },
         actions: {
+
             
+            getInfoContacts: () => {
+                fetch("https://playground.4geeks.com/contact/agendas/jessica/contacts", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        name: "jessica",
+                        description: "Agenda Description",
+                    }),
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.error && data.error === "Rate limit exceeded: 60 per 1 minute") {
+                            setStore({ rateLimitError: true });  
+                            console.error("Rate limit exceeded: Please wait a minute before trying again.");
+                        } else {
+                            console.log("Agenda creada con éxito:", data);
+                            setStore({ contacts: data.contacts });
+                            setStore({ rateLimitError: false });  
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error al crear la agenda:", error);
+                    });
+            },
 
-
-
-
-
-
-
+        
             getContacts: () => {
+                if (getStore().rateLimitError) {
+                    console.log("Rate limit exceeded. Please try again later.");
+                    return;
+                }
+
                 fetch("https://playground.4geeks.com/contact/agendas/jessica/contacts")
                     .then((result) => result.json())
                     .then((data) => {
-                        console.log("Contacts data: ", data); // Verifica la respuesta completa de la API
+                        console.log("Contacts data: ", data);
                         if (data.contacts) {
                             setStore({ contacts: data.contacts });
                         } else {
                             console.error("No contacts found in response");
                         }
                     })
-                    .catch((error) => console.log("Error fetching contacts:", error));
+                    .catch((error) => {
+                        console.log("Error fetching contacts:", error);
+                    });
             },
-            addContact: (contact) => {
-                const store = getStore()
 
+    
+            addContact: (contact) => {
+                if (getStore().rateLimitError) {
+                    console.log("Rate limit exceeded. Please try again later.");
+                    return; 
+                }
+
+                const store = getStore();
 
                 fetch("https://playground.4geeks.com/contact/agendas/jessica/contacts", {
                     method: "POST",
@@ -37,73 +73,81 @@ const getState = ({ getStore, getActions, setStore }) => {
                 })
                     .then((result) => {
                         if (result.ok) {
-                            return result.json()
+                            return result.json();
                         }
                     })
                     .then((data) => {
-                        console.log("Contacts data: ", data); // Verifica la respuesta completa de la API
+                        console.log("Contacts data: ", data); 
                         if (data) {
                             setStore({ contacts: [...store.contacts, data] });
                         } else {
                             console.error("no se agrego el contacto");
                         }
                     })
-                    .catch((error) => console.log("Error fetching contacts:", error));
+                    .catch((error) => {
+                        console.log("Error fetching contacts:", error);
+                    });
             },
-            updateContact: (contact,id) => {
-                const store = getStore()
 
+            // Actualizar un contacto
+            updateContact: (contact, id) => {
+                const store = getStore();
 
-                fetch("https://playground.4geeks.com/contact/agendas/jessica/contacts/"+id, {
+                fetch("https://playground.4geeks.com/contact/agendas/jessica/contacts/" + id, {
                     method: "PUT",
                     body: JSON.stringify(contact),
                     headers: { "Content-Type": "application/json" }
                 })
                     .then((result) => {
                         if (result.ok) {
-                            return result.json()
+                            return result.json();
                         }
                     })
                     .then((data) => {
-                        console.log("Contacts data: ", data); // Verifica la respuesta completa de la API
+                        console.log("Contacts data: ", data);
                         if (data) {
                             const updatedContacts = store.contacts.map(item => {
-                                if(item.id==id){
-                                    item=data
+                                if (item.id === id) {
+                                    item = data;
                                 }
-                                return item
-                            })
+                                return item;
+                            });
                             setStore({ contacts: updatedContacts });
                         } else {
                             console.error("no se actualizo el contacto");
                         }
                     })
-                    .catch((error) => console.log("Error fetching contacts:", error));
+                    .catch((error) => {
+                        console.log("Error fetching contacts:", error);
+                    });
             },
+
+            
             deleteContact: (id) => {
-                const store = getStore()
+                const store = getStore();
 
-
-                fetch("https://playground.4geeks.com/contact/agendas/jessica/contacts/"+id, {
+                fetch("https://playground.4geeks.com/contact/agendas/jessica/contacts/" + id, {
                     method: "DELETE"
                 })
                     .then((result) => {
                         if (result.ok) {
-                            return result
+                            return result;
                         }
                     })
                     .then((data) => {
-                        console.log("Contacts data: ", data); // Verifica la respuesta completa de la API
+                        console.log("Contacts data: ", data);
                         if (data) {
-                            setStore({ contacts: store.contacts.filter(item=>item.id != id) });
+                            setStore({ contacts: store.contacts.filter(item => item.id !== id) });
                         } else {
                             console.error("no se elimino el contacto");
                         }
                     })
-                    .catch((error) => console.log("Error fetching contacts:", error));
+                    .catch((error) => {
+                        console.log("Error fetching contacts:", error);
+                    });
             },
 
-            // Cambiar el color de un elemento en el array 'demo'
+            
             changeColor: (index, color) => {
                 const store = getStore();
                 const demo = store.demo.map((elm, i) => {

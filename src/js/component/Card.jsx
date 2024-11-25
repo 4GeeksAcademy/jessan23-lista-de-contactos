@@ -5,14 +5,19 @@ import { Context } from "../store/appContext";
 export const Card = () => {
   const { store, actions } = useContext(Context);
 
+  // Llamar a la acción para obtener los contactos cuando el componente se monte
+  useEffect(() => {
+    actions.getInfoContacts(); // Aquí llamas a tu acción para obtener los contactos
+  }, [actions]);
+
   console.log(store.contacts);
 
   return (
     <div className="container mt-4">
       {store.contacts && store.contacts.length > 0 ? (
-        <div className="d-flex flex-column align-items-center min-vh-100 gap-4"> {/* Flexbox columna con alto mínimo de pantalla */}
+        <div className="d-flex flex-column align-items-center min-vh-100 gap-4"> 
           {store.contacts.map((item, index) => (
-            <div className="card w-75" key={index}> {/* Cada tarjeta tiene un ancho de 75% */}
+            <div className="card w-75" key={index}> 
               <div className="row g-0">
                 <div className="col-md-4 d-flex justify-content-center align-items-center">
                   <img
