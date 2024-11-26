@@ -26,7 +26,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             console.error("Rate limit exceeded: Please wait a minute before trying again.");
                         } else {
                             console.log("Agenda creada con éxito:", data);
-                            setStore({ contacts: data.contacts });
+                
                             setStore({ rateLimitError: false });  
                         }
                     })

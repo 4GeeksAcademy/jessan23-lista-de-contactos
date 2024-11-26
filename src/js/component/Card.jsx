@@ -5,12 +5,12 @@ import { Context } from "../store/appContext";
 export const Card = () => {
   const { store, actions } = useContext(Context);
 
-  // Llamar a la acción para obtener los contactos cuando el componente se monte
-  useEffect(() => {
-    actions.getInfoContacts(); // Aquí llamas a tu acción para obtener los contactos
-  }, [actions]);
+  
+  
+    //  actions.getInfoContacts(); 
+  
 
-  console.log(store.contacts);
+   console.log(store.contacts);
 
   return (
     <div className="container mt-4">
