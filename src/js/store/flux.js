@@ -3,39 +3,39 @@ const getState = ({ getStore, getActions, setStore }) => {
         store: {
             contacts: [],
             demo: [],
-            rateLimitError: false,  
+            rateLimitError: false,
         },
         actions: {
 
-            
-            getInfoContacts: () => {
-                fetch("https://playground.4geeks.com/contact/agendas/jessica/contacts", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        name: "jessica",
-                        description: "Agenda Description",
-                    }),
-                })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        if (data.error && data.error === "Rate limit exceeded: 60 per 1 minute") {
-                            setStore({ rateLimitError: true });  
-                            console.error("Rate limit exceeded: Please wait a minute before trying again.");
-                        } else {
-                            console.log("Agenda creada con éxito:", data);
-                
-                            setStore({ rateLimitError: false });  
-                        }
-                    })
-                    .catch((error) => {
-                        console.error("Error al crear la agenda:", error);
-                    });
+
+            createAgenda: async () => {
+                try {
+                    const res = await fetch("https://playground.4geeks.com/contact/agendas/jessica",
+                        {
+                            method: "POST",
+                        })
+                    if ("res.ok") {
+
+                        console.log("Agenda creada con exito.");
+                        return { created: true };
+                    } else if (res.status === 400) {
+                        console.warn("Agenda ha sido creada anteriormente");
+                        return { created: false };
+                    } else {
+                        console.error("Error al crear la agenda:", res.statusText);
+                        return { created: null }
+
+                    }
+
+                } catch (error) {
+                    console.error("Error al crear la agenda:", error);
+                    return { created: null }
+                }
+
+
             },
 
-        
+
             getContacts: () => {
                 if (getStore().rateLimitError) {
                     console.log("Rate limit exceeded. Please try again later.");
@@ -57,11 +57,11 @@ const getState = ({ getStore, getActions, setStore }) => {
                     });
             },
 
-    
+
             addContact: (contact) => {
                 if (getStore().rateLimitError) {
                     console.log("Rate limit exceeded. Please try again later.");
-                    return; 
+                    return;
                 }
 
                 const store = getStore();
@@ -77,7 +77,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         }
                     })
                     .then((data) => {
-                        console.log("Contacts data: ", data); 
+                        console.log("Contacts data: ", data);
                         if (data) {
                             setStore({ contacts: [...store.contacts, data] });
                         } else {
@@ -122,7 +122,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     });
             },
 
-            
+
             deleteContact: (id) => {
                 const store = getStore();
 
@@ -147,7 +147,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     });
             },
 
-            
+
             changeColor: (index, color) => {
                 const store = getStore();
                 const demo = store.demo.map((elm, i) => {

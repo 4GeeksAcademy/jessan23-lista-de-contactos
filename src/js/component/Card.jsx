@@ -7,8 +7,11 @@ export const Card = () => {
 
   
   
-    //  actions.getInfoContacts(); 
   
+  useEffect(()=>{
+    actions.createAgenda()
+    actions.getContacts()
+  },[])
 
    console.log(store.contacts);
 
